@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Mini Keyboard</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <!-- KeyboardView - accessibility support -->
+    <!-- Description of the Alt button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_alt">Alt</string>
+    <!-- Description of the Cancel button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_cancel">Cancel</string>
+    <!-- Description of the Delete button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_delete">Delete</string>
+    <!-- Description of the Done button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_done">Done</string>
+    <!-- Description of the Mode change button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_mode_change">Mode change</string>
+    <!-- Description of the Shift button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_shift">Shift</string>
+    <!-- Description of the Enter button in a KeyboardView. [CHAR LIMIT=NONE] -->
+    <string name="keyboardview_keycode_enter">Enter</string>
+
+    <!-- Symbols that are commonly considered word separators in this language -->
+
+
+    <string name="word_separators">\u0020.,;:!?\n()[]*&amp;@{}/&lt;&gt;_+=|&quot;</string>
+
+    <!-- Labels on soft keys -->
+
+
+    <string name="label_go_key">Go</string>
+
+    <string name="label_next_key">Next</string>
+
+    <string name="label_send_key">Send</string>
+
+    <!-- Labels for subtype -->
+
+
+    <string name="label_subtype_generic">Mini Keyboard</string>
+
+    <string name="label_subtype_en_GB">English (GB)</string>
+
+    <!-- Titles for ImePreference -->
+
+
+    <string name="settings_name">Sample Soft Keyboard Settings</string>
+
+    <string name="language_selection_title">Input languages</string>
+
+    <string name="select_language">Select input languages</string>
+
+    <string name="general_category">General</string>
+</resources>

@@ -20,11 +20,12 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.drawable.Drawable;
-import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.Keyboard.Key;
 import android.view.inputmethod.EditorInfo;
 
+import androidx.core.content.res.ResourcesCompat;
+
 import com.matech.minikeyboard.R;
+import com.matech.minikeyboard.keyboard.Keyboard;
 
 public class LatinKeyboard extends Keyboard {
 
@@ -82,30 +83,6 @@ public class LatinKeyboard extends Keyboard {
     }
 
     /**
-     * Dynamically change the visibility of the language switch key (a.k.a. globe key).
-     *
-     * @param visible True if the language switch key should be visible.
-     */
-    void setLanguageSwitchKeyVisibility(boolean visible) {
-        if (visible) {
-            // The language switch key should be visible. Restore the size of the mode change key
-            // and language switch key using the saved layout.
-            mModeChangeKey.width = mSavedModeChangeKey.width;
-            mModeChangeKey.x = mSavedModeChangeKey.x;
-            mLanguageSwitchKey.width = mSavedLanguageSwitchKey.width;
-            mLanguageSwitchKey.icon = mSavedLanguageSwitchKey.icon;
-            mLanguageSwitchKey.iconPreview = mSavedLanguageSwitchKey.iconPreview;
-        } else {
-            // The language switch key should be hidden. Change the width of the mode change key
-            // to fill the space of the language key so that the user will not see any strange gap.
-            mModeChangeKey.width = mSavedModeChangeKey.width + mSavedLanguageSwitchKey.width;
-            mLanguageSwitchKey.width = 0;
-            mLanguageSwitchKey.icon = null;
-            mLanguageSwitchKey.iconPreview = null;
-        }
-    }
-
-    /**
      * This looks at the ime options given by the current editor, to set the
      * appropriate label on the keyboard's enter key (if it has one).
      */
@@ -126,7 +103,7 @@ public class LatinKeyboard extends Keyboard {
                 mEnterKey.label = res.getText(R.string.label_next_key);
                 break;
             case EditorInfo.IME_ACTION_SEARCH:
-                mEnterKey.icon = res.getDrawable(R.drawable.sym_keyboard_search);
+                mEnterKey.icon = ResourcesCompat.getDrawable(res, R.drawable.ic_key_search, null);
                 mEnterKey.label = null;
                 break;
             case EditorInfo.IME_ACTION_SEND:
@@ -135,7 +112,7 @@ public class LatinKeyboard extends Keyboard {
                 mEnterKey.label = res.getText(R.string.label_send_key);
                 break;
             default:
-                mEnterKey.icon = res.getDrawable(R.drawable.sym_keyboard_return);
+                mEnterKey.icon = ResourcesCompat.getDrawable(res, R.drawable.ic_key_enter, null);
                 mEnterKey.label = null;
                 break;
         }

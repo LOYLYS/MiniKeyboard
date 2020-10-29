@@ -82,6 +82,8 @@ public class Keyboard {
     public static final int KEYCODE_DONE = -4;
     public static final int KEYCODE_DELETE = -5;
     public static final int KEYCODE_ALT = -6;
+    public static final int KEYCODE_LANGUAGE_SWITCH = -101;
+    public static final int KEYCODE_STICKERS = -102;
 
     /**
      * Keyboard label

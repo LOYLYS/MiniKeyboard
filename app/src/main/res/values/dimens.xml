@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="key_height">42dp</dimen>
+    <dimen name="key_height_default">42dp</dimen>
+    <dimen name="key_vertical_gap_default">8dp</dimen>
     <dimen name="candidate_font_height">16sp</dimen>
     <dimen name="candidate_vertical_padding">6sp</dimen>
+    <dimen name="key_vertical_gap_symbol">16dp</dimen>
+    <dimen name="key_height_symbol">50.6dp</dimen>
 </resources>

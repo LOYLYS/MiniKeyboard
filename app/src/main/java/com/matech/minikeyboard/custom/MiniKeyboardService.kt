@@ -11,10 +11,10 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputConnection
+import android.view.inputmethod.InputBinding
 import android.view.inputmethod.InputMethodManager
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.matech.minikeyboard.R
-import com.matech.minikeyboard.custom.LatinKeyboardView.KEYCODE_LANGUAGE_SWITCH
 import com.matech.minikeyboard.keyboard.Keyboard
 import com.matech.minikeyboard.keyboard.KeyboardView
 
@@ -22,7 +22,7 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
 
     companion object {
         const val PROCESS_HARD_KEYS = true
-        const val TIMEOUT_CAPS_LOCK_DOUBLE_CLICK = 800L
+        const val TIMEOUT_CAPS_LOCK_DOUBLE_CLICK = 500L
     }
 
     private lateinit var inputMethodManager: InputMethodManager
@@ -33,7 +33,6 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
     private var symbolsKeyboard: LatinKeyboard? = null
     private var symbolsShiftedKeyboard: LatinKeyboard? = null
     private var currentKeyboard: LatinKeyboard? = null
-    private val composing = StringBuilder()
     private var lastDisplayWidth: Int = 0
     private var lastShiftTime: Long = 0L
     private var metaState = 0L
@@ -68,7 +67,6 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
         isPredictionOn = false
-        composing.setLength(0)
         if (!restarting) metaState = 0L
         when (attribute?.inputType?.and(InputType.TYPE_MASK_CLASS)) {
             InputType.TYPE_CLASS_NUMBER, InputType.TYPE_CLASS_DATETIME, InputType.TYPE_CLASS_PHONE -> {
@@ -104,7 +102,6 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
 
     override fun onFinishInput() {
         super.onFinishInput()
-        composing.setLength(0)
         currentKeyboard = qwertyKeyboard
         inputView?.closing()
     }
@@ -124,13 +121,6 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
                     if (event?.repeatCount == 0 && it.handleBack()) {
                         return true
                     }
-                }
-            }
-
-            KeyEvent.KEYCODE_DEL -> {
-                if (composing.isNotEmpty()) {
-                    onKey(Keyboard.KEYCODE_DELETE, null)
-                    return true
                 }
             }
             KeyEvent.KEYCODE_ENTER -> return false
@@ -174,32 +164,36 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
     }
 
     override fun onKey(primaryCode: Int, keyCodes: IntArray?) {
-        if (isWordSeparator(primaryCode)) {
-            if (composing.isNotEmpty()) {
-                commitTyped(currentInputConnection)
+        when {
+            isWordSeparator(primaryCode) -> {
+                sendKey(primaryCode)
+                updateShiftKeyState(currentInputEditorInfo)
             }
-            sendKey(primaryCode)
-            updateShiftKeyState(currentInputEditorInfo)
-        } else if (primaryCode == Keyboard.KEYCODE_DELETE) handleBackspace()
-        else if (primaryCode == Keyboard.KEYCODE_SHIFT) handleShift()
-        else if (primaryCode == Keyboard.KEYCODE_CANCEL) handleClose()
-        else if (primaryCode == Keyboard.KEYCODE_LANGUAGE_SWITCH) handleSwitchLanguage()
-        else if (primaryCode == LatinKeyboardView.KEYCODE_OPTIONS) handleOptions()
-        else if (primaryCode == Keyboard.KEYCODE_MODE_CHANGE && inputView != null) {
-            if (inputView?.keyboard == symbolsKeyboard || inputView?.keyboard == symbolsShiftedKeyboard) {
-                inputView?.keyboard = qwertyKeyboard
-            } else {
-                inputView?.keyboard = symbolsKeyboard
-                symbolsKeyboard?.isShifted = false
+            primaryCode == Keyboard.KEYCODE_DELETE -> handleBackspace()
+            primaryCode == Keyboard.KEYCODE_SHIFT -> handleShift()
+            primaryCode == Keyboard.KEYCODE_CANCEL -> handleClose()
+            primaryCode == Keyboard.KEYCODE_LANGUAGE_SWITCH -> handleSwitchLanguage()
+            primaryCode == Keyboard.KEYCODE_OPTIONS -> handleOptions()
+            primaryCode == Keyboard.KEYCODE_MODE_CHANGE -> {
+                inputView?.let {
+                    if (it.keyboard == symbolsKeyboard || it.keyboard == symbolsShiftedKeyboard) {
+                        it.keyboard = qwertyKeyboard
+                    } else {
+                        it.keyboard = symbolsKeyboard
+                        symbolsKeyboard?.isShifted = false
+                    }
+                }
             }
-        } else if (primaryCode == Keyboard.KEYCODE_STICKERS) handleStickers()
-        else handleCharacter(primaryCode, keyCodes)
+            primaryCode == Keyboard.KEYCODE_STICKERS -> handleStickers()
+            else -> {
+                handleCharacter(primaryCode, keyCodes)
+            }
+        }
     }
 
     override fun onText(text: CharSequence?) {
         currentInputConnection?.apply {
             beginBatchEdit()
-            if (composing.isNotEmpty()) commitTyped(this)
             commitText(text, 0)
             endBatchEdit()
             updateShiftKeyState(currentInputEditorInfo)
@@ -253,14 +247,6 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
         if (unicodeChar.and(KeyCharacterMap.COMBINING_ACCENT) != 0) {
             unicodeChar = unicodeChar.and(KeyCharacterMap.COMBINING_ACCENT_MASK)
         }
-        if (composing.isNotEmpty()) {
-            val accent = composing[composing.length - 1]
-            val composed = KeyEvent.getDeadChar(accent.toInt(), unicodeChar)
-            if (composed != 0) {
-                unicodeChar = composed
-                composing.setLength(composing.length - 1)
-            }
-        }
         onKey(unicodeChar, null)
         return true
     }
@@ -288,28 +274,8 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
         }
     }
 
-    private fun commitTyped(inputConnection: InputConnection?) {
-        if (composing.isNotEmpty()) {
-            inputConnection?.commitText(composing, composing.length)
-            composing.setLength(0)
-        }
-    }
-
     private fun handleBackspace() {
-        val length = composing.length
-        when {
-            length > 1 -> {
-                composing.delete(length - 1, length)
-                currentInputConnection?.setComposingText(composing, 1)
-            }
-            length > 0 -> {
-                composing.setLength(0)
-                currentInputConnection?.commitText("", 0)
-            }
-            else -> {
-                keyDownUp(KeyEvent.KEYCODE_DEL)
-            }
-        }
+        keyDownUp(KeyEvent.KEYCODE_DEL)
         updateShiftKeyState(currentInputEditorInfo)
     }
 
@@ -340,8 +306,7 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
             if (inputView?.isShifted == true) code = Character.toUpperCase(primaryCode)
         }
         if (Character.isLetter(code) && isPredictionOn) {
-            composing.append(primaryCode.toChar())
-            currentInputConnection?.setComposingText(composing, 1)
+            sendKey(code)
             updateShiftKeyState(currentInputEditorInfo)
         } else {
             currentInputConnection?.commitText(code.toChar().toString(), 1)
@@ -349,7 +314,6 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
     }
 
     private fun handleClose() {
-        commitTyped(currentInputConnection)
         requestHideSelf(InputMethodManager.RESULT_UNCHANGED_SHOWN)
         inputView?.closing()
     }

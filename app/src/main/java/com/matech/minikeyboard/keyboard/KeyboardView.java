@@ -220,8 +220,8 @@ public class KeyboardView extends View implements View.OnClickListener {
     private static final int REPEAT_START_DELAY = 400;
     private static final int LONGPRESS_TIMEOUT = ViewConfiguration.getLongPressTimeout();
 
-    private static int MAX_NEARBY_KEYS = 12;
-    private int[] mDistances = new int[MAX_NEARBY_KEYS];
+    private static final int MAX_NEARBY_KEYS = 12;
+    private final int[] mDistances = new int[MAX_NEARBY_KEYS];
 
     // For multi-tap
     private int mLastSentIndex;
@@ -266,7 +266,7 @@ public class KeyboardView extends View implements View.OnClickListener {
 
     Handler mHandler;
 
-    private Context mContext;
+    private final Context mContext;
     private int mPaddingBottom = 16;
     private int mPaddingLeft = 5;
     private int mPaddingTop = 16;
@@ -783,11 +783,6 @@ public class KeyboardView extends View implements View.OnClickListener {
             canvas.translate(-key.x - kbdPaddingLeft, -key.y - kbdPaddingTop);
         }
         mInvalidatedKey = null;
-        // Overlay a dark rectangle to dim the keyboard
-//        if (mMiniKeyboardOnScreen) {
-//            paint.setColor((int) (mBackgroundDimAmount * 0xFF) << 24);
-//            canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
-//        }
 
         boolean mShowTouchPoints = true;
         if (DEBUG && mShowTouchPoints) {

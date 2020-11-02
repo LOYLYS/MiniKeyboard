@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2008-2009 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package com.matech.minikeyboard.keyboard;
 
 import android.content.Context;
@@ -26,8 +10,10 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.util.Xml;
+import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.XmlRes;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.matech.minikeyboard.R;
 
@@ -38,30 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-
-/**
- * Loads an XML description of a keyboard and stores the attributes of the keys. A keyboard
- * consists of rows of keys.
- * <p>The layout file for a keyboard contains XML that looks like the following snippet:</p>
- * <pre>
- * &lt;Keyboard
- *         android:keyWidth="%10p"
- *         android:keyHeight="50px"
- *         android:horizontalGap="2px"
- *         android:verticalGap="2px" &gt;
- *     &lt;Row android:keyWidth="32px" &gt;
- *         &lt;Key android:keyLabel="A" /&gt;
- *         ...
- *     &lt;/Row&gt;
- *     ...
- * &lt;/Keyboard&gt;
- * </pre>
- *
- * @attr ref android.R.styleable#Keyboard_keyWidth
- * @attr ref android.R.styleable#Keyboard_keyHeight
- * @attr ref android.R.styleable#Keyboard_horizontalGap
- * @attr ref android.R.styleable#Keyboard_verticalGap
- */
 public class Keyboard {
 
     static final String TAG = "Keyboard";
@@ -83,7 +45,6 @@ public class Keyboard {
     public static final int KEYCODE_DELETE = -5;
     public static final int KEYCODE_ALT = -6;
     public static final int KEYCODE_LANGUAGE_SWITCH = -101;
-    public static final int KEYCODE_STICKERS = -102;
     public static final int KEYCODE_OPTIONS = -100;
 
     /**
@@ -115,6 +76,8 @@ public class Keyboard {
      * Is the keyboard in the shifted state
      */
     private boolean mShifted;
+
+    private Key mEnterKey;
 
     /**
      * Key instance for the shift key, if present
@@ -231,7 +194,7 @@ public class Keyboard {
          */
         public int mode;
 
-        private Keyboard parent;
+        private final Keyboard parent;
 
         public Row(Keyboard parent) {
             this.parent = parent;
@@ -356,7 +319,7 @@ public class Keyboard {
         /**
          * The keyboard that this key belongs to
          */
-        private Keyboard keyboard;
+        private final Keyboard keyboard;
         /**
          * If this key pops up a mini keyboard, this is the resource id for the XML layout for that
          * keyboard.
@@ -551,14 +514,10 @@ public class Keyboard {
             boolean rightEdge = (edgeFlags & EDGE_RIGHT) > 0;
             boolean topEdge = (edgeFlags & EDGE_TOP) > 0;
             boolean bottomEdge = (edgeFlags & EDGE_BOTTOM) > 0;
-            if ((x >= this.x || (leftEdge && x <= this.x + this.width))
+            return (x >= this.x || (leftEdge && x <= this.x + this.width))
                     && (x < this.x + this.width || (rightEdge && x >= this.x))
                     && (y >= this.y || (topEdge && y <= this.y + this.height))
-                    && (y < this.y + this.height || (bottomEdge && y >= this.y))) {
-                return true;
-            } else {
-                return false;
-            }
+                    && (y < this.y + this.height || (bottomEdge && y >= this.y));
         }
 
         /**
@@ -885,7 +844,11 @@ public class Keyboard {
 
     protected Key createKeyFromXml(Resources res, Row parent, int x, int y,
                                    XmlResourceParser parser) {
-        return new Key(res, parent, x, y, parser);
+        Key key = new Key(res, parent, x, y, parser);
+        if (key.codes[0] == 10) {
+            mEnterKey = key;
+        }
+        return key;
     }
 
     private void loadKeyboard(Context context, XmlResourceParser parser) {
@@ -1002,5 +965,40 @@ public class Keyboard {
             return Math.round(a.getFraction(index, base, base, defValue));
         }
         return defValue;
+    }
+
+    /**
+     * This looks at the ime options given by the current editor, to set the
+     * appropriate label on the keyboard's enter key (if it has one).
+     */
+    public void setImeOptions(Resources res, int options) {
+        if (mEnterKey == null) {
+            return;
+        }
+        switch (options&(EditorInfo.IME_MASK_ACTION|EditorInfo.IME_FLAG_NO_ENTER_ACTION)) {
+            case EditorInfo.IME_ACTION_GO:
+                mEnterKey.iconPreview = null;
+                mEnterKey.icon = null;
+                mEnterKey.label = res.getText(R.string.label_go_key);
+                break;
+            case EditorInfo.IME_ACTION_NEXT:
+                mEnterKey.iconPreview = null;
+                mEnterKey.icon = null;
+                mEnterKey.label = res.getText(R.string.label_next_key);
+                break;
+            case EditorInfo.IME_ACTION_SEARCH:
+                mEnterKey.icon = ResourcesCompat.getDrawable(res, R.drawable.ic_key_search, null);
+                mEnterKey.label = null;
+                break;
+            case EditorInfo.IME_ACTION_SEND:
+                mEnterKey.iconPreview = null;
+                mEnterKey.icon = null;
+                mEnterKey.label = res.getText(R.string.label_send_key);
+                break;
+            default:
+                mEnterKey.icon = ResourcesCompat.getDrawable(res, R.drawable.ic_key_enter, null);
+                mEnterKey.label = null;
+                break;
+        }
     }
 }

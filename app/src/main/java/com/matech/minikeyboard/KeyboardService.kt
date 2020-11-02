@@ -1,38 +1,33 @@
-package com.matech.minikeyboard.custom
+package com.matech.minikeyboard
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.inputmethodservice.InputMethodService
 import android.os.Build
 import android.text.InputType
-import android.text.method.MetaKeyKeyListener
-import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputBinding
 import android.view.inputmethod.InputMethodManager
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.matech.minikeyboard.R
 import com.matech.minikeyboard.keyboard.Keyboard
 import com.matech.minikeyboard.keyboard.KeyboardView
 
-class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionListener {
+open class KeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     companion object {
-        const val PROCESS_HARD_KEYS = true
         const val TIMEOUT_CAPS_LOCK_DOUBLE_CLICK = 500L
     }
 
     private lateinit var inputMethodManager: InputMethodManager
     private lateinit var wordSeparators: String
 
-    private var inputView: LatinKeyboardView? = null
-    private var qwertyKeyboard: LatinKeyboard? = null
-    private var symbolsKeyboard: LatinKeyboard? = null
-    private var symbolsShiftedKeyboard: LatinKeyboard? = null
-    private var currentKeyboard: LatinKeyboard? = null
+    private var inputView: KeyboardView? = null
+    private var qwertyKeyboard: Keyboard? = null
+    private var symbolsKeyboard: Keyboard? = null
+    private var symbolsShiftedKeyboard: Keyboard? = null
+    private var currentKeyboard: Keyboard? = null
     private var lastDisplayWidth: Int = 0
     private var lastShiftTime: Long = 0L
     private var metaState = 0L
@@ -51,17 +46,16 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
             if (maxWidth == lastDisplayWidth) return
             lastDisplayWidth = maxWidth
         }
-        qwertyKeyboard = LatinKeyboard(displayContext, R.xml.qwerty)
-        symbolsKeyboard = LatinKeyboard(displayContext, R.xml.symbols)
-        symbolsShiftedKeyboard = LatinKeyboard(displayContext, R.xml.symbols_shift)
+        qwertyKeyboard = Keyboard(displayContext, R.xml.qwerty)
+        symbolsKeyboard = Keyboard(displayContext, R.xml.symbols)
+        symbolsShiftedKeyboard = Keyboard(displayContext, R.xml.symbols_shift)
     }
 
     @SuppressLint("InflateParams")
     override fun onCreateInputView(): View {
-        inputView = layoutInflater.inflate(R.layout.input, null) as LatinKeyboardView
-        inputView?.setOnKeyboardActionListener(this)
-        inputView?.keyboard = qwertyKeyboard
-        return inputView as LatinKeyboardView
+        val container = layoutInflater.inflate(R.layout.keyboard_container, null) as ConstraintLayout
+        initKeyboardView(container)
+        return container
     }
 
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
@@ -114,47 +108,6 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
         }
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_BACK -> {
-                inputView?.let {
-                    if (event?.repeatCount == 0 && it.handleBack()) {
-                        return true
-                    }
-                }
-            }
-            KeyEvent.KEYCODE_ENTER -> return false
-            else -> {
-                if (PROCESS_HARD_KEYS) {
-                    if (keyCode == KeyEvent.KEYCODE_SPACE && (event?.metaState?.and(KeyEvent.META_ALT_ON) != 0)) {
-                        currentInputConnection?.let {
-                            it.clearMetaKeyStates(KeyEvent.META_ALT_ON)
-                            keyDownUp(KeyEvent.KEYCODE_A)
-                            keyDownUp(KeyEvent.KEYCODE_N)
-                            keyDownUp(KeyEvent.KEYCODE_D)
-                            keyDownUp(KeyEvent.KEYCODE_R)
-                            keyDownUp(KeyEvent.KEYCODE_O)
-                            keyDownUp(KeyEvent.KEYCODE_I)
-                            keyDownUp(KeyEvent.KEYCODE_D)
-                            return true
-                        }
-                    }
-                    if (isPredictionOn && translateKeyDown(keyCode, event)) return true
-                }
-            }
-        }
-        return super.onKeyDown(keyCode, event)
-    }
-
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        if (PROCESS_HARD_KEYS) {
-            if (isPredictionOn) {
-                metaState = MetaKeyKeyListener.handleKeyUp(metaState, keyCode, event)
-            }
-        }
-        return super.onKeyUp(keyCode, event)
-    }
-
     override fun onPress(primaryCode: Int) {
 
     }
@@ -172,7 +125,7 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
             primaryCode == Keyboard.KEYCODE_DELETE -> handleBackspace()
             primaryCode == Keyboard.KEYCODE_SHIFT -> handleShift()
             primaryCode == Keyboard.KEYCODE_CANCEL -> handleClose()
-            primaryCode == Keyboard.KEYCODE_LANGUAGE_SWITCH -> handleSwitchLanguage()
+            primaryCode == Keyboard.KEYCODE_LANGUAGE_SWITCH -> handleSwitchKeyboard()
             primaryCode == Keyboard.KEYCODE_OPTIONS -> handleOptions()
             primaryCode == Keyboard.KEYCODE_MODE_CHANGE -> {
                 inputView?.let {
@@ -184,7 +137,6 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
                     }
                 }
             }
-            primaryCode == Keyboard.KEYCODE_STICKERS -> handleStickers()
             else -> {
                 handleCharacter(primaryCode, keyCodes)
             }
@@ -216,6 +168,12 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
 
     }
 
+    open fun initKeyboardView(container: ConstraintLayout) {
+        inputView = container.findViewById(R.id.keyboard_view)
+        inputView?.setOnKeyboardActionListener(this)
+        inputView?.keyboard = qwertyKeyboard
+    }
+
     private fun getDisplayContext(): Context? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             display?.let { createDisplayContext(it) }
@@ -237,18 +195,6 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
                 }
             }
         }
-    }
-
-    private fun translateKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        metaState = MetaKeyKeyListener.handleKeyDown(metaState, keyCode, event)
-        var unicodeChar = event?.getUnicodeChar(MetaKeyKeyListener.getMetaState(metaState)) ?: 0
-        metaState = MetaKeyKeyListener.adjustMetaAfterKeypress(metaState)
-        if (unicodeChar == 0 || currentInputConnection == null) return false
-        if (unicodeChar.and(KeyCharacterMap.COMBINING_ACCENT) != 0) {
-            unicodeChar = unicodeChar.and(KeyCharacterMap.COMBINING_ACCENT_MASK)
-        }
-        onKey(unicodeChar, null)
-        return true
     }
 
     private fun keyDownUp(keyCode: Int) {
@@ -318,16 +264,14 @@ class MiniKeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionL
         inputView?.closing()
     }
 
-    private fun handleSwitchLanguage() {
-        // TODO: 29/10/2020 Handle switch language if used
+    private fun handleSwitchKeyboard() {
+        (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).apply {
+            showInputMethodPicker()
+        }
     }
 
     private fun handleOptions() {
         // TODO: 29/10/2020 Handle show menu or something if used
-    }
-
-    private fun handleStickers() {
-        // TODO: 29/10/2020 Handle layout stickers
     }
 
     private fun checkToggleCapsLock() {

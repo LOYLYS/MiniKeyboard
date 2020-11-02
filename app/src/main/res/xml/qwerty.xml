@@ -1,21 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-/* 
-**
-** Copyright 2008, The Android Open Source Project
-**
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
-**
-**     http://www.apache.org/licenses/LICENSE-2.0 
-**
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
-** limitations under the License.
-*/
--->
+<?xml version="1.0" encoding="utf-8"?>
 
 <Keyboard xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -133,7 +116,7 @@
             app:isModifier="true"
             app:isSticky="true"
             app:keyEdgeFlags="left"
-            app:keyIcon="@drawable/ic_key_shift_outline"
+            app:keyIcon="@drawable/ic_key_shift"
             app:keyWidth="13%p" />
         <Key
             app:codes="122"
@@ -166,10 +149,9 @@
 
     <Row app:rowEdgeFlags="bottom">
         <Key
-            app:codes="-2"
+            app:codes="-2,-2"
             app:keyEdgeFlags="left"
-            app:keyLabel="!"
-            android:keyLabel="!123"
+            app:keyLabel="\?123"
             app:keyWidth="13%p" />
         <Key
             app:codes="44"
@@ -183,7 +165,9 @@
             app:keyWidth="38.4%p" />
         <Key
             app:codes="46"
-            app:keyLabel="." />
+            app:keyLabel="."
+            app:popupCharacters="abcd7"
+            app:popupKeyboard="@layout/keyboard_key_preview"/>
         <Key
             app:codes="10"
             app:keyEdgeFlags="right"

@@ -32,6 +32,7 @@
         app:keyPreviewLayout="@layout/keyboard_key_preview"
         app:keyTextSize="22sp"
         app:popupLayout="@layout/keyboard_popup_keyboard"
+        app:keyBackground="@drawable/keyboard_key_background"
         tools:ignore="ResourceCycle" />
 
     <ImageButton

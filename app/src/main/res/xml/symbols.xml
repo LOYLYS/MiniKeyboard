@@ -99,7 +99,7 @@
             app:isModifier="true"
             app:isSticky="true"
             app:keyEdgeFlags="left"
-            app:keyIcon="@drawable/ic_key_shift_outline"
+            app:keyIcon="@drawable/ic_key_shift"
             app:keyWidth="13%p" />
         <Key
             app:codes="33"
@@ -134,9 +134,9 @@
         app:keyHeight="@dimen/key_height_default"
         app:rowEdgeFlags="bottom">
         <Key
-            app:codes="-2"
+            app:codes="-2,-2"
             app:keyEdgeFlags="left"
-            app:keyLabel="ABC"
+            app:keyLabel="abc"
             app:keyWidth="13%p" />
         <Key
             app:codes="44"

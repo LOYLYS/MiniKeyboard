@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2008-2009 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package com.matech.minikeyboard.keyboard;
 
 import android.annotation.SuppressLint;
@@ -32,6 +16,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -229,7 +214,7 @@ public class KeyboardView extends View implements View.OnClickListener {
     private long mLastTapTime;
     private boolean mInMultiTap;
     private static final int MULTITAP_INTERVAL = 800; // milliseconds
-    private StringBuilder mPreviewLabel = new StringBuilder(1);
+    private final StringBuilder mPreviewLabel = new StringBuilder(1);
 
     /**
      * Whether the keyboard bitmap needs to be redrawn before it's blitted.
@@ -238,7 +223,7 @@ public class KeyboardView extends View implements View.OnClickListener {
     /**
      * The dirty region in the keyboard bitmap
      */
-    private Rect mDirtyRect = new Rect();
+    private final Rect mDirtyRect = new Rect();
     /**
      * The keyboard bitmap for faster updates
      */
@@ -730,7 +715,6 @@ public class KeyboardView extends View implements View.OnClickListener {
             }
         }
         canvas.drawColor(0x00000000, PorterDuff.Mode.CLEAR);
-        final int keyCount = keys.length;
         for (final Key key : keys) {
             if (drawSingleKey && invalidKey != key) {
                 continue;
@@ -751,9 +735,9 @@ public class KeyboardView extends View implements View.OnClickListener {
 
             if (label != null) {
                 // For characters, use large font. For labels like "Done", use small font.
-                if (label.length() > 1 && key.codes.length < 2) {
+                if (label.length() > 1) {
                     paint.setTextSize(mLabelTextSize);
-                    paint.setTypeface(Typeface.DEFAULT_BOLD);
+                    paint.setTypeface(Typeface.DEFAULT);
                 } else {
                     paint.setTextSize(mKeyTextSize);
                     paint.setTypeface(Typeface.DEFAULT);
@@ -807,7 +791,6 @@ public class KeyboardView extends View implements View.OnClickListener {
         int closestKeyDist = mProximityThreshold + 1;
         java.util.Arrays.fill(mDistances, Integer.MAX_VALUE);
         int[] nearestKeyIndices = mKeyboard.getNearestKeys(x, y);
-        final int keyCount = nearestKeyIndices.length;
         for (int nearestKeyIndex : nearestKeyIndices) {
             final Key key = keys[nearestKeyIndex];
             int dist = 0;
@@ -1095,13 +1078,13 @@ public class KeyboardView extends View implements View.OnClickListener {
                 key.x + key.width + mPaddingLeft, key.y + key.height + mPaddingTop);
     }
 
-    private boolean openPopupIfRequired(MotionEvent me) {
+    private void openPopupIfRequired(MotionEvent me) {
         // Check if we have a popup layout specified first.
         if (mPopupLayout == 0) {
-            return false;
+            return;
         }
         if (mCurrentKey < 0 || mCurrentKey >= mKeys.length) {
-            return false;
+            return;
         }
 
         Key popupKey = mKeys[mCurrentKey];
@@ -1110,7 +1093,6 @@ public class KeyboardView extends View implements View.OnClickListener {
             mAbortKey = true;
             showPreview(NOT_A_KEY);
         }
-        return result;
     }
 
     /**
@@ -1122,6 +1104,7 @@ public class KeyboardView extends View implements View.OnClickListener {
      * method on the base class if the subclass doesn't wish to handle the call.
      */
     protected boolean onLongPress(Key popupKey) {
+        Log.d("keyse", "onLongPress() called with: popupKey = [" + popupKey + "]");
         int popupKeyboardId = popupKey.popupResId;
 
         if (popupKeyboardId != 0) {

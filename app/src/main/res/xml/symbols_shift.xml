@@ -1,24 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-/* 
-**
-** Copyright 2008, The Android Open Source Project
-**
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
-**
-**     http://www.apache.org/licenses/LICENSE-2.0 
-**
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
-** limitations under the License.
-*/
--->
-
+<?xml version="1.0" encoding="utf-8"?>
 <Keyboard xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     app:horizontalGap="1%p"
     app:keyHeight="@dimen/key_height_symbol"
     app:keyWidth="8.8%p"
@@ -26,44 +7,44 @@
 
     <Row>
         <Key
-            app:codes="126"
+            app:codes="64"
             app:keyEdgeFlags="left"
-            app:keyLabel="~" />
+            app:keyLabel="\@" />
         <Key
-            app:codes="177"
-            app:keyLabel="±" />
+            app:codes="35"
+            app:keyLabel="\#" />
         <Key
-            app:codes="215"
-            app:keyLabel="×" />
+            app:codes="38"
+            app:keyLabel="&amp;" />
         <Key
-            app:codes="247"
-            app:keyLabel="÷" />
+            app:codes="63"
+            app:keyLabel="\?" />
         <Key
-            app:codes="8226"
-            app:keyLabel="•" />
+            app:codes="191"
+            app:keyLabel="¿" />
         <Key
-            app:codes="176"
-            app:keyLabel="°" />
+            app:codes="33"
+            app:keyLabel="!" />
         <Key
-            app:codes="96"
-            app:keyLabel="`" />
+            app:codes="161"
+            app:keyLabel="¡" />
         <Key
-            app:codes="180"
-            app:keyLabel="´" />
+            app:codes="188"
+            app:keyLabel="¼" />
         <Key
-            app:codes="123"
-            app:keyLabel="{" />
+            app:codes="189"
+            app:keyLabel="½" />
         <Key
-            app:codes="125"
+            app:codes="190"
             app:keyEdgeFlags="right"
-            app:keyLabel="}" />
+            app:keyLabel="¾" />
     </Row>
 
     <Row>
         <Key
-            app:codes="169"
+            app:codes="36"
             app:keyEdgeFlags="left"
-            app:keyLabel="©" />
+            app:keyLabel="$" />
         <Key
             app:codes="163"
             app:keyLabel="£" />
@@ -71,27 +52,27 @@
             app:codes="8364"
             app:keyLabel="€" />
         <Key
-            app:codes="94"
-            app:keyLabel="^" />
-        <Key
-            app:codes="174"
-            app:keyLabel="®" />
-        <Key
             app:codes="165"
             app:keyLabel="¥" />
+        <Key
+            app:codes="92"
+            app:keyLabel="\\" />
+        <Key
+            app:codes="124"
+            app:keyLabel="|" />
+        <Key
+            app:codes="94"
+            app:keyLabel="^" />
         <Key
             app:codes="95"
             app:keyLabel="_" />
         <Key
-            app:codes="43"
-            app:keyLabel="+" />
+            app:codes="34"
+            app:keyLabel="&quot;" />
         <Key
-            app:codes="91"
-            app:keyLabel="[" />
-        <Key
-            app:codes="93"
+            app:codes="59"
             app:keyEdgeFlags="right"
-            app:keyLabel="]" />
+            app:keyLabel=";" />
     </Row>
 
     <Row>
@@ -103,26 +84,26 @@
             app:keyIcon="@drawable/ic_key_shift"
             app:keyWidth="13%p" />
         <Key
-            app:codes="161"
-            app:keyLabel="¡" />
+            app:codes="171"
+            app:keyLabel="«" />
         <Key
-            app:codes="60"
-            app:keyLabel="&lt;" />
+            app:codes="8226"
+            app:keyLabel="•" />
         <Key
-            app:codes="62"
-            app:keyLabel="&gt;" />
+            app:codes="176"
+            app:keyLabel="°" />
         <Key
-            app:codes="162"
-            app:keyLabel="¢" />
+            app:codes="96"
+            app:keyLabel="`" />
         <Key
-            app:codes="124"
-            app:keyLabel="|" />
+            app:codes="39"
+            app:keyLabel="\'" />
         <Key
-            app:codes="92"
-            app:keyLabel="\\" />
+            app:codes="180"
+            app:keyLabel="´" />
         <Key
-            app:codes="191"
-            app:keyLabel="¿" />
+            app:codes="187"
+            app:keyLabel="»" />
         <Key
             app:codes="-5"
             app:isRepeatable="true"
@@ -140,8 +121,8 @@
             app:keyLabel="abc"
             app:keyWidth="13%p" />
         <Key
-            app:codes="44"
-            app:keyLabel="," />
+            app:codes="60"
+            app:keyLabel="&lt;" />
         <Key
             app:codes="-101"
             app:keyIcon="@drawable/ic_key_language" />
@@ -150,8 +131,8 @@
             app:isRepeatable="true"
             app:keyWidth="38.4%p" />
         <Key
-            app:codes="46"
-            app:keyLabel="." />
+            app:codes="62"
+            app:keyLabel="&gt;" />
         <Key
             app:codes="10"
             app:keyEdgeFlags="right"

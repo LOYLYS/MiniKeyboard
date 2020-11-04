@@ -17,6 +17,7 @@ import com.matech.minikeyboard.keyboard.KeyboardView
 open class KeyboardService : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     companion object {
+        private const val TAG = "KeyboardService"
         const val TIMEOUT_CAPS_LOCK_DOUBLE_CLICK = 500L
     }
 
@@ -46,6 +47,7 @@ open class KeyboardService : InputMethodService(), KeyboardView.OnKeyboardAction
             if (maxWidth == lastDisplayWidth) return
             lastDisplayWidth = maxWidth
         }
+        if (displayContext == null) return
         qwertyKeyboard = Keyboard(displayContext, R.xml.qwerty)
         symbolsKeyboard = Keyboard(displayContext, R.xml.symbols)
         symbolsShiftedKeyboard = Keyboard(displayContext, R.xml.symbols_shift)
@@ -53,7 +55,8 @@ open class KeyboardService : InputMethodService(), KeyboardView.OnKeyboardAction
 
     @SuppressLint("InflateParams")
     override fun onCreateInputView(): View {
-        val container = layoutInflater.inflate(R.layout.keyboard_container, null) as ConstraintLayout
+        val container =
+            layoutInflater.inflate(R.layout.keyboard_container, null) as ConstraintLayout
         initKeyboardView(container)
         return container
     }

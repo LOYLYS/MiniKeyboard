@@ -494,7 +494,7 @@ public class KeyboardView extends View implements View.OnClickListener {
         removeMessages();
         mKeyboard = keyboard;
         List<Key> keys = mKeyboard.getKeys();
-        mKeys = keys.toArray(new Key[keys.size()]);
+        mKeys = keys.toArray(new Key[0]);
         requestLayout();
         // Hint to reallocate the buffer if the size changed
         mKeyboardChanged = true;

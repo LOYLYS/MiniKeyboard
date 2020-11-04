@@ -1,22 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-/* 
-**
-** Copyright 2008, The Android Open Source Project
-**
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
-**
-**     http://www.apache.org/licenses/LICENSE-2.0 
-**
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
-** limitations under the License.
-*/
--->
-
+<?xml version="1.0" encoding="utf-8"?>
 <Keyboard xmlns:app="http://schemas.android.com/apk/res-auto"
     app:horizontalGap="1%p"
     app:keyHeight="@dimen/key_height_symbol"
@@ -60,37 +42,37 @@
 
     <Row>
         <Key
-            app:codes="64"
+            app:codes="43"
             app:keyEdgeFlags="left"
-            app:keyLabel="\@" />
-        <Key
-            app:codes="35"
-            app:keyLabel="\#" />
-        <Key
-            app:codes="36"
-            app:keyLabel="$" />
-        <Key
-            app:codes="37"
-            app:keyLabel="%" />
-        <Key
-            app:codes="38"
-            app:keyLabel="&amp;" />
-        <Key
-            app:codes="42"
-            app:keyLabel="*" />
+            app:keyLabel="+" />
         <Key
             app:codes="45"
             app:keyLabel="-" />
         <Key
+            app:codes="215"
+            app:keyLabel="×" />
+        <Key
+            app:codes="247"
+            app:keyLabel="÷" />
+        <Key
             app:codes="61"
             app:keyLabel="=" />
         <Key
-            app:codes="40"
-            app:keyLabel="(" />
+            app:codes="177"
+            app:keyLabel="±" />
         <Key
-            app:codes="41"
+            app:codes="42"
+            app:keyLabel="*" />
+        <Key
+            app:codes="58"
+            app:keyLabel=":" />
+        <Key
+            app:codes="37"
+            app:keyLabel="%" />
+        <Key
+            app:codes="47"
             app:keyEdgeFlags="right"
-            app:keyLabel=")" />
+            app:keyLabel="/" />
     </Row>
 
     <Row>
@@ -102,26 +84,26 @@
             app:keyIcon="@drawable/ic_key_shift"
             app:keyWidth="13%p" />
         <Key
-            app:codes="33"
-            app:keyLabel="!" />
+            app:codes="91"
+            app:keyLabel="[" />
         <Key
-            app:codes="34"
-            app:keyLabel="&quot;" />
+            app:codes="123"
+            app:keyLabel="{" />
         <Key
-            app:codes="39"
-            app:keyLabel="\'" />
+            app:codes="40"
+            app:keyLabel="(" />
         <Key
-            app:codes="58"
-            app:keyLabel=":" />
+            app:codes="126"
+            app:keyLabel="~" />
         <Key
-            app:codes="59"
-            app:keyLabel=";" />
+            app:codes="41"
+            app:keyLabel=")" />
         <Key
-            app:codes="47"
-            app:keyLabel="/" />
+            app:codes="125"
+            app:keyLabel="}" />
         <Key
-            app:codes="63"
-            app:keyLabel="\?" />
+            app:codes="93"
+            app:keyLabel="]" />
         <Key
             app:codes="-5"
             app:isRepeatable="true"

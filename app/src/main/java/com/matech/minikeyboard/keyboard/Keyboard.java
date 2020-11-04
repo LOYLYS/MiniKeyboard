@@ -75,7 +75,7 @@ public class Keyboard {
     /**
      * Is the keyboard in the shifted state
      */
-    private boolean mShifted;
+    private boolean mShifted = true;
 
     private Key mEnterKey;
 
@@ -149,7 +149,7 @@ public class Keyboard {
      */
     private static float SEARCH_DISTANCE = 1.8f;
 
-    private ArrayList<Row> rows = new ArrayList<Row>();
+    private final ArrayList<Row> rows = new ArrayList<Row>();
 
     /**
      * Container for keys in the keyboard. All keys in a row are at the same Y-coordinate.

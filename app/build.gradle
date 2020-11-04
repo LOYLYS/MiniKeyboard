@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.library'
+    id 'com.android.application'
     id 'kotlin-android'
 }
 
@@ -8,6 +8,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
+        applicationId "com.matech.minikeyboard"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1

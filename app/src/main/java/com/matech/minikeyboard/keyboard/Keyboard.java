@@ -149,7 +149,7 @@ public class Keyboard {
      */
     private static float SEARCH_DISTANCE = 1.8f;
 
-    private ArrayList<Row> rows = new ArrayList<Row>();
+    private final ArrayList<Row> rows = new ArrayList<Row>();
 
     /**
      * Container for keys in the keyboard. All keys in a row are at the same Y-coordinate.
@@ -252,7 +252,7 @@ public class Keyboard {
         public int[] codes;
 
         /**
-         * Label to display
+         * Label to displayarr
          */
         public CharSequence label;
 
